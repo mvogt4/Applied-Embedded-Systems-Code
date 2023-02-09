@@ -1,0 +1,120 @@
+const int BLED=9;       //Blue LED Cathode on pin 9
+const int GLED=10;      //Green LED Cathode on pin 10
+const int RLED=11;      //Red LED Cathode on pin 11
+const int BUTTON=2;     //The button is connected to pin 2
+
+boolean lastButton = LOW;     //Last button state
+boolean currentButton = LOW;  //Current button state 
+int ledMode = 0;              //Cycle between LED states
+
+int RBLED = random(255);
+int RGLED = random(255);
+int RRLED = random(255);
+
+void setup()
+{
+  pinMode (BLED, OUTPUT);
+  pinMode (GLED, OUTPUT);
+  pinMode (RLED, OUTPUT);
+  pinMode (BUTTON, INPUT);
+}
+
+
+
+boolean debounce(boolean last)
+{
+  boolean current = digitalRead(BUTTON);
+  if (last != current)
+  {
+    delay(5);
+    current = digitalRead(BUTTON);
+  }
+  return current;
+}
+
+void setMode(int mode)
+{
+  if (mode == 1) //red
+  {
+    digitalWrite(RLED, HIGH);
+    digitalWrite(GLED, LOW);
+    digitalWrite(BLED, LOW);
+  }
+  else if (mode == 2) //Green
+  {
+    digitalWrite(RLED, LOW);
+    digitalWrite(GLED, HIGH);
+    digitalWrite(BLED, LOW);
+  }
+  else if (mode == 3) //Blue
+  {
+    digitalWrite(RLED, LOW);
+    digitalWrite(GLED, LOW);
+    digitalWrite(BLED, HIGH);
+  }
+  else if (mode == 4) //Purple
+  {
+    analogWrite(RLED, 106);
+    analogWrite(GLED, 13);
+    analogWrite(BLED, 173);
+  }
+  else if (mode == 5) //teal
+  {
+    analogWrite(RLED, 0);
+    analogWrite(GLED, 128);
+    analogWrite(BLED, 128);
+  }
+  else if (mode == 6) //Orange
+  {
+    analogWrite(RLED, 255);
+    analogWrite(GLED, 35);
+    analogWrite(BLED, 0);
+    
+  }
+  else if (mode == 7) //White
+  {
+    analogWrite(RLED, 255);
+    analogWrite(GLED, 255);
+    analogWrite(BLED, 255);
+  }
+  else if (mode == 8) //Sunset Yellow
+  {
+    analogWrite(RLED, 255);
+    analogWrite(GLED, 100);
+    analogWrite(BLED, 34);
+  }
+  else if (mode == 9)
+  {
+    analogWrite(BLED, RBLED);
+    analogWrite(RLED, RRLED);
+    analogWrite(GLED, RGLED);
+
+
+  }
+  //OFF (mode = 0)
+  else 
+  {
+    digitalWrite(RLED, LOW);
+    digitalWrite(GLED, LOW);
+    digitalWrite(BLED, LOW);
+  }
+}
+
+
+void loop()
+{
+  currentButton = debounce(lastButton);
+  if (lastButton == LOW && currentButton == HIGH)
+  {
+    ledMode++;
+  }
+  lastButton = currentButton;
+  if (ledMode == 10) 
+  {
+    RBLED = random(255);
+    RRLED = random(255);
+    RGLED = random(255);
+    ledMode = 0;
+  }
+  setMode(ledMode);
+}
